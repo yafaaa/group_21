@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: management
+#   web:
+#     resources:
+#       static-locations: file:/uploads/game-images/ # Docker won't see Windows path, fix below  rozp wavi wmns olrx
+  datasource:
+    url: jdbc:mysql://localhost:3306/bingo
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:   
+      ddl-auto: create-drop    #  update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          servlet:
+            mvc:
+              method:
+                annotation:
+                  RequestMappingHandlerMapping: DEBUG
