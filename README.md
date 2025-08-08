@@ -1,7 +1,7 @@
 "# group_21" 
 # INSA Talent Management System
 
-A web-based talent management system built for INSA (Information Network Security Agency) to manage recruitment, evaluation, and development of employees and candidates.
+A web-based talent management system built for INSA (Information Network Security Agency) to manage recruitment, evaluation, and development of Summer camp students.
 
 ## 🧩 Features
 
