@@ -2,23 +2,28 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 const Department = require('./department.model');
 
-const TechStack = sequelize.define('TechStack', {
+const Mentor = sequelize.define('Mentor', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
   name: {
     type: DataTypes.STRING,
-    primaryKey: true,
     allowNull: false,
   },
-  department: {
-    type: DataTypes.STRING,
+  department_id: {
+    type: DataTypes.INTEGER,
     allowNull: false,
     references: {
       model: Department,
-      key: 'name',
+      key: 'id',
     },
   },
+  
 }, {
-  tableName: 'techstacks',
+  tableName: 'mentors',
   timestamps: false,
 });
 
-module.exports = TechStack;
+module.exports = Mentor;
