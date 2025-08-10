@@ -25,17 +25,17 @@ problem:
 
 Do **many requests/responses at once** on the same connection.
 
-- **Binary format**: Easier and faster for computers to read (vs. text-based HTTP/1.1)
+- **Binary format**: Easier and faster for computers to read (reduce the external conversion needed)
 - **HPACK Compression**: Shrinks headers (data sent with requests) to save data
-- **Server Push**: Server sends things *before* you ask — like sending the CSS as soon as you request the HTML
+- **Server Push**: Server sends things *before* you ask like sending the CSS as soon as you request the HTML
 
 problem
 
-uses **TCP** — so if a packet is lost, it can slow down everything.(protocol used to share file)
+uses **TCP** so if a packet is lost, it can slow down everything.(protocol used to share file)
 
 ### 4. **HTTP/3** 
 
-Uses **QUIC** (built on **UDP**(NO **TCP**) ) — a newer, faster delivery system.(protocol used for time sensitve like streaming)
+Uses **QUIC** (built on **UDP**(NO **TCP**) ) a newer, faster delivery system.(protocol used for time sensitve like streaming)
 
-**No full connection block** if one file has a problem (each stream is independent)
-**Faster setup**: Combines TCP (handshake for connection) and TLS (handshake to secure), making only **one step** .
+- **No full connection block** if one file has a problem (each stream is independent)
+- **Faster setup**: Combines TCP (handshake for connection) and TLS (handshake to secure), making only **one step** .
