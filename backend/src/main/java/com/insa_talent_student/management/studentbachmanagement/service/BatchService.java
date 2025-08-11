@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.insa_talent_student.management.studentbachmanagement.StudentBatchService;
 import com.insa_talent_student.management.studentbachmanagement.dtoLayer.dto.BatchRequest;
+import com.insa_talent_student.management.studentbachmanagement.dtoLayer.dto.BatchResponse;
 import com.insa_talent_student.management.studentbachmanagement.entity.Department;
 import com.insa_talent_student.management.studentbachmanagement.entity.TalentBatch;
 import com.insa_talent_student.management.studentbachmanagement.repository.DepartmentRepository;
@@ -14,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class BatchService {
+public class BatchService implements StudentBatchService {
     private final TalentBatchRepository talentBatchRepository;
     private final DepartmentRepository departmentRepository;
 
@@ -51,6 +53,13 @@ public class BatchService {
 
     public List<Department> getAllDepartments() {
         return departmentRepository.findAll();
+    }
+
+    @Override
+    public BatchRes bachInfoOff(Long id) {
+        TalentBatch batch = getBatchById(id);
+
+        return new BatchRes(batch.getSeason(), batch.getYear());
     }
     
     
