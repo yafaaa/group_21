@@ -36,4 +36,4 @@ This system is not just a tool to manage student data. It is a strategic platfor
 
 To create a **national-level platform** that could evolve into a central student innovation and talent management system not only for INSA but also as a model for other institutions aiming to nurture elite, future-ready talent in Ethiopia.
 
----
+---+-
