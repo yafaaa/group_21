@@ -19,11 +19,11 @@ public class TalentBatch {
     private String season;
     private int year;
     
-    @ElementCollection
-    private List<Long> studentIds; // List of profile IDs
+    // @ElementCollection
+    // private List<Long> studentIds; // List of profile IDs
     
-    @ElementCollection
-    private List<Long> mentorIds; // List of profile IDs
+    // @ElementCollection
+    // private List<Long> mentorIds; // List of profile IDs
     
     @OneToMany(mappedBy = "talentBatch", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Building> buildings = new ArrayList<>();

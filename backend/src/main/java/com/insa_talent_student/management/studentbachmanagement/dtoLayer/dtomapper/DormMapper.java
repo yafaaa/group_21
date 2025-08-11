@@ -1,19 +1,27 @@
 package com.insa_talent_student.management.studentbachmanagement.dtoLayer.dtomapper;
 
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
+import com.insa_talent_student.management.studentbachmanagement.dtoLayer.ObjBuilder;
+import com.insa_talent_student.management.studentbachmanagement.dtoLayer.dto.BuildingDetail;
 import com.insa_talent_student.management.studentbachmanagement.dtoLayer.dto.BuildingRequest;
 import com.insa_talent_student.management.studentbachmanagement.dtoLayer.dto.BuildingResponse;
+import com.insa_talent_student.management.studentbachmanagement.dtoLayer.dto.Roomdto;
 import com.insa_talent_student.management.studentbachmanagement.entity.Building;
+import com.insa_talent_student.management.studentbachmanagement.entity.Room;
 import com.insa_talent_student.management.studentbachmanagement.service.DormService;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
 public class DormMapper {
      private final DormService dormService;
+     private final ObjBuilder objBuilder;
 
      public BuildingResponse createBuilding(BuildingRequest request) {
         Building building = new Building();
@@ -22,33 +30,50 @@ public class DormMapper {
         building.setTotalRooms(request.getTotalRooms());
 
         Building createdBuilding = dormService.createBuilding(building, request.getBatchId() );
-
-        BuildingResponse buildingResponse = new BuildingResponse();
-         buildingResponse.setBlockNumber(createdBuilding.getBlockNumber());
-         buildingResponse.setRoomCapacity(createdBuilding.getRoomCapacity());
-         buildingResponse.setTotalRooms(createdBuilding.getTotalRooms());
-
-        return buildingResponse;
+        return objBuilder.toBuildingResponse(createdBuilding);
      }
 
-     public Object getAllBuildings() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllBuildings'");
+     public List<BuildingDetail> getAllBuildings() {
+        List<Building> buildings = dormService.getAllBuildings();
+        return buildings.stream()
+                           .map(objBuilder::toBuildingDetail)
+                           .toList();
      }
 
-     public Object getBuildingById(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getBuildingById'");
+     public BuildingDetail getBuildingById(Long id) {
+        Building building = dormService.getBuildingById(id);
+        if (building == null) {
+            throw new EntityNotFoundException("Building not found");
+        }
+       return objBuilder.toBuildingDetail(building);
      }
 
-     public Object updateBuilding(Long id, BuildingRequest request) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateBuilding'");
+     public BuildingDetail updateBuilding(Long id, BuildingRequest request) {
+       Building building = dormService.updateBuilding(id, request);
+
+      return objBuilder.toBuildingDetail(building);
      }
 
      public void deleteBuilding(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteBuilding'");
+        dormService.deleteBuilding(id);
+     }
+
+     public Roomdto addRoom(Long id,Roomdto request) {
+       Building building = dormService.getBuildingById(id);
+        if (building == null) {
+            throw new EntityNotFoundException("Building not found");
+        }
+       Room room = new Room();
+       room.setRoomNumber(request.getRoomNumber());
+       room.setCapacity(request.getCapacity());
+
+       Room addedRoom = dormService.addRoom(room,building);
+       return objBuilder.toRoomDto(addedRoom);
+     }
+
+     public Roomdto updateRoom(Long id, Roomdto request) {
+       Room room = dormService.updateRoom(id,request);
+       return objBuilder.toRoomDto(room);
      }
     
 }

@@ -1,13 +1,17 @@
 package com.insa_talent_student.management.studentbachmanagement.service;
 
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.insa_talent_student.management.studentbachmanagement.dtoLayer.dto.BuildingRequest;
+import com.insa_talent_student.management.studentbachmanagement.dtoLayer.dto.Roomdto;
 import com.insa_talent_student.management.studentbachmanagement.entity.Building;
 import com.insa_talent_student.management.studentbachmanagement.entity.Room;
 import com.insa_talent_student.management.studentbachmanagement.entity.TalentBatch;
 import com.insa_talent_student.management.studentbachmanagement.repository.BuildingRepositoery;
+import com.insa_talent_student.management.studentbachmanagement.repository.RoomRepositoery;
 import com.insa_talent_student.management.studentbachmanagement.repository.TalentBatchRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -17,10 +21,10 @@ import lombok.RequiredArgsConstructor;
 public class DormService {
     private final BuildingRepositoery buildingRepositoery;
     private final TalentBatchRepository talentBatchRepository;
+    private final RoomRepositoery roomRepositoery;
 
-    public Object getAllBuildings() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllBuildings'");
+    public List<Building> getAllBuildings() {
+        return buildingRepositoery.findAll();
     }
 
     public Building  createBuilding(Building building, Long batchId) {
@@ -41,21 +45,35 @@ public class DormService {
 
     }
 
-    public Object getBuildingById(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getBuildingById'");
+    public Building getBuildingById(Long id) {
+        return buildingRepositoery.findById(id)
+            .orElseThrow(() -> new RuntimeException("Building not found"));
     }
 
-    public Object updateBuilding(Long id, BuildingRequest request) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateBuilding'");
+    public Building updateBuilding(Long id, BuildingRequest request) {
+
+        Building building = getBuildingById(id);
+        building.setBlockNumber(request.getBlockNumber());
+        building.setRoomCapacity(request.getRoomCapacity());
+        building.setTotalRooms(request.getTotalRooms());
+        return buildingRepositoery.save(building);
     }
 
     public void deleteBuilding(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteBuilding'");
+        buildingRepositoery.deleteById(id);
     }
 
-  
-    
+    public Room addRoom(Room room, Building building) {
+        building.addRoom(room);
+        buildingRepositoery.save(building);
+        return room;
+    }
+
+    public Room updateRoom(Long id, Roomdto request) {
+        Room room = roomRepositoery.findById(id)
+            .orElseThrow(() -> new RuntimeException("Room not found"));
+        room.setRoomNumber(request.getRoomNumber());
+        room.setCapacity(request.getCapacity());
+        return roomRepositoery.save(room);
+    }
 }
