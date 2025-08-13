@@ -25,6 +25,7 @@ public class UserCredential implements UserDetails {
 
     @Column(nullable = false)
     private String password;
+    private Long talentBatchId;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)

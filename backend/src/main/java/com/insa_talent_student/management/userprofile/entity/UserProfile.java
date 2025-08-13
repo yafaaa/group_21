@@ -20,8 +20,7 @@ public class UserProfile {
 
     private String name;
     private Long roomId; // ✅ Indexed for faster "find all students in this room"
-    private Long credentialId; // Reference to auth module by ID
-    private Long talentBatchId; // Reference by ID instead of entity
+    private Long credentialId; // Reference to auth module by ID // Reference by ID instead of entity
     private String grade;
     private String sex;
 

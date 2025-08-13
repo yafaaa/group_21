@@ -1,7 +1,12 @@
 package com.insa_talent_student.management.auth.controller;
 
+import java.util.List;
+
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,7 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.insa_talent_student.management.auth.dtoLayer.dtoMapper.AdminMapper;
 import com.insa_talent_student.management.auth.dtoLayer.dtoMapper.AuthMapper;
+import com.insa_talent_student.management.auth.entity.UserCredential;
 
+import io.jsonwebtoken.io.IOException;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -43,6 +50,17 @@ public class AdminController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing file: " + e.getMessage());
         }
+    }
+    
+    @GetMapping("/accounts-cards-pdf/{id}")
+    public ResponseEntity<byte[]> downloadCardsPdf(@PathVariable Long id) throws IOException {
+        // List<UserCredential> accounts = userCredentialRepo.findAll();
+        byte[] pdfBytes = adminMapper.generateAccountCards(id);
+
+        return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=accounts_cards.pdf")
+            .contentType(MediaType.APPLICATION_PDF)
+            .body(pdfBytes);
     }
 
 }

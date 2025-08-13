@@ -32,4 +32,8 @@ public class AdminMapper {
             e.printStackTrace();
         }
     }
+
+    public byte[] generateAccountCards(Long id) {
+        return accountService.generateAccountCards(id);
+    }
 }
