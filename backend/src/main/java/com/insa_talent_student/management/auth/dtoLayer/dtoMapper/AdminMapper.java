@@ -5,6 +5,8 @@ import java.io.IOException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.insa_talent_student.management.auth.dtoLayer.dto.LoginRequest;
+import com.insa_talent_student.management.auth.dtoLayer.dto.UserDto;
 import com.insa_talent_student.management.auth.service.AccountService;
 
 import lombok.RequiredArgsConstructor;
@@ -36,4 +38,13 @@ public class AdminMapper {
     public byte[] generateAccountCards(Long id) {
         return accountService.generateAccountCards(id);
     }
+
+    public void addUser(UserDto userDto, Long id) {
+        accountService.addUser(userDto, id);
+    }
+
+    public LoginRequest getloginData(Long id) {
+        return accountService.getloginData(id);
+    }
+    
 }

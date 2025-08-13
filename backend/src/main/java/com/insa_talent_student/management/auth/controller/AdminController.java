@@ -1,7 +1,5 @@
 package com.insa_talent_student.management.auth.controller;
 
-import java.util.List;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -9,14 +7,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.insa_talent_student.management.auth.dtoLayer.dto.LoginRequest;
+import com.insa_talent_student.management.auth.dtoLayer.dto.UserDto;
 import com.insa_talent_student.management.auth.dtoLayer.dtoMapper.AdminMapper;
-import com.insa_talent_student.management.auth.dtoLayer.dtoMapper.AuthMapper;
-import com.insa_talent_student.management.auth.entity.UserCredential;
 
 import io.jsonwebtoken.io.IOException;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +50,20 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing file: " + e.getMessage());
         }
     }
-    
+
+    @PostMapping("/student/add/{id}")
+    public ResponseEntity<String> uploadTeachers(@RequestBody UserDto userDto, @PathVariable Long id) {
+        adminMapper.addUser(userDto, id);
+        // 1. Validate file
+        return ResponseEntity.ok("student added successfully.");
+    }
+    @GetMapping("/accounts-cards/{id}")
+    public ResponseEntity<LoginRequest> getAccountsCards(@PathVariable Long id) {
+        // List<UserCredential> accounts = userCredentialRepo.findAll();
+        LoginRequest loginData = adminMapper.getloginData(id);
+        return ResponseEntity.ok(loginData);
+    }
+
     @GetMapping("/accounts-cards-pdf/{id}")
     public ResponseEntity<byte[]> downloadCardsPdf(@PathVariable Long id) throws IOException {
         // List<UserCredential> accounts = userCredentialRepo.findAll();

@@ -2,6 +2,9 @@ package com.insa_talent_student.management.auth.service;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.insa_talent_student.management.auth.dtoLayer.dto.JwtTokenResponse;
@@ -34,6 +37,16 @@ public class AuthService {
         String token = jwtserv.generateToken(credential);
         return new JwtTokenResponse(token,credential.getRoles(),"Bearer","Authentication successful");
 
+    }
+    public static UserCredential getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof UserDetails) {
+                return (UserCredential) principal;
+            }
+        }
+        return null;
     }
     
 }

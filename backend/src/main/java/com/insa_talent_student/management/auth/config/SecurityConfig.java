@@ -12,7 +12,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.insa_talent_student.management.auth.jwtAuthanticationFilter;
 import com.insa_talent_student.management.auth.entity.Role;
 
 import java.util.List;

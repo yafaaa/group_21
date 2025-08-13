@@ -1,4 +1,4 @@
-package com.insa_talent_student.management.auth;
+package com.insa_talent_student.management.auth.config;
 
 import java.io.IOException;
 

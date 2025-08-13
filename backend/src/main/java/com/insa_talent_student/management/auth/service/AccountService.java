@@ -24,6 +24,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.insa_talent_student.management.auth.dtoLayer.dto.LoginRequest;
+import com.insa_talent_student.management.auth.dtoLayer.dto.UserDto;
 import com.insa_talent_student.management.auth.entity.UserCredential;
 import com.insa_talent_student.management.auth.repository.UserCredentialRepo;
 import com.insa_talent_student.management.studentbachmanagement.StudentBatchService;
@@ -38,6 +40,8 @@ public class AccountService {
     private static final int PASSWORD_LENGTH = 10;
     private static final SecureRandom random = new SecureRandom();
     private final StudentBatchService studentBatchService;
+   
+  
 
     private final UserCredentialRepo userCredentialRepo;
     private final Set<String> generatedPasswords = new HashSet<>();
@@ -59,10 +63,7 @@ public class AccountService {
                 String name = record.get("name");
 
                 String password = generateUniquePassword();
-                UserCredential userCredential = new UserCredential();
-                userCredential.setUsername(generateUsername(name, season, year));
-                userCredential.setTalentBatchId(batchId);
-                userCredential.setPassword(password); // later hash
+                UserCredential userCredential = createUserCredential(name, password, batchId, season, year);
                 userCredentialRepo.save(userCredential);
                 
             }
@@ -83,10 +84,7 @@ public class AccountService {
                     String name = row.getCell(0).getStringCellValue();
 
                     String password = generateUniquePassword();
-                    UserCredential userCredential = new UserCredential();
-                    userCredential.setUsername(generateUsername(name, season, year));
-                    userCredential.setTalentBatchId(batchId);
-                    userCredential.setPassword(password); // later hash
+                    UserCredential userCredential = createUserCredential(name, password, batchId, season, year);
                     userCredentialRepo.save(userCredential);
                 }
             }
@@ -200,5 +198,30 @@ public class AccountService {
         catch (IOException e) {
             throw new RuntimeException("Error generating account cards PDF", e);
         }
+    }
+
+    public void addUser(UserDto userDto, Long id) {
+        BatchRes batch = studentBatchService.bachInfoOff(id);
+        String season = batch.getSeason();
+        int year = batch.getYear();
+
+        String password = generateUniquePassword();
+        UserCredential userCredential = createUserCredential(userDto.getUserName(), password, id, season, year);
+        userCredentialRepo.save(userCredential);
+    }
+
+    public LoginRequest getloginData(Long id) {
+        UserCredential userCredential = userCredentialRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return new LoginRequest(userCredential.getUsername(), userCredential.getPassword());
+    }
+
+
+    private UserCredential createUserCredential(String username, String password, Long batchId, String season, int year) {
+        UserCredential userCredential = new UserCredential();
+        userCredential.setUsername(generateUsername(username, season, year));
+        userCredential.setPassword(password);
+        userCredential.setTalentBatchId(batchId);
+        return userCredential;
     }
 }
