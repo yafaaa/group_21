@@ -22,11 +22,13 @@ public class UserProfile {
     private Long roomId; // ✅ Indexed for faster "find all students in this room"
     private Long credentialId; // Reference to auth module by ID
     private Long talentBatchId; // Reference by ID instead of entity
-    private String grade;
     private String sex;
 
-    @ElementCollection
-    private List<String> skills;
+    private String grade;
+    private List<TechStack> techStacks;
+
+    private String familyPhone;
+    private String address;
 
     private Long departmentId; // Reference by ID instead of entity
 }
