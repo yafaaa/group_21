@@ -10,4 +10,5 @@ import com.insa_talent_student.management.auth.entity.UserCredential;
 public interface UserCredentialRepo extends JpaRepository<UserCredential, Long> {
     Optional<UserCredential> findByUsername(String username);
     List<UserCredential> findByTalentBatchId(Long id);
+    Optional<UserCredential> findByProfileId(Long profileId);
 }

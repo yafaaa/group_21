@@ -26,8 +26,8 @@ import lombok.RequiredArgsConstructor;
 public class AdminController {
     private final AdminMapper adminMapper;
 
-    @PostMapping("/students/upload/{id}")
-    public ResponseEntity<String> uploadStudents(@RequestParam("file") MultipartFile file, @PathVariable Long id) {
+    @PostMapping("/students/upload/{batchId}")
+    public ResponseEntity<String> uploadStudents(@RequestParam("file") MultipartFile file, @PathVariable Long batchId) {
         // 1. Validate file
         if (file.isEmpty()) {
             return ResponseEntity.badRequest().body("Please upload a file!");
@@ -37,10 +37,10 @@ public class AdminController {
         try {
             if (fileName != null && fileName.endsWith(".csv")) {
                 // process CSV
-                adminMapper.saveuserFromCsv(file,id);
+                adminMapper.saveuserFromCsv(file,batchId);
             } else if (fileName != null && (fileName.endsWith(".xls") || fileName.endsWith(".xlsx"))) {
                 // process Excel
-                adminMapper.saveuserFromExcel(file,id);
+                adminMapper.saveuserFromExcel(file,batchId);
             } else {
                 return ResponseEntity.badRequest().body("Unsupported file type. Please upload CSV or Excel.");
             }
@@ -51,23 +51,29 @@ public class AdminController {
         }
     }
 
-    @PostMapping("/student/add/{id}")
-    public ResponseEntity<String> uploadTeachers(@RequestBody UserDto userDto, @PathVariable Long id) {
-        adminMapper.addUser(userDto, id);
+    @PostMapping("/student/add/{batchId}")
+    public ResponseEntity<String> uploadTeachers(@RequestBody UserDto userDto, @PathVariable Long batchId) {
+        adminMapper.addUser(userDto, batchId);
         // 1. Validate file
         return ResponseEntity.ok("student added successfully.");
     }
-    @GetMapping("/accounts-cards/{id}")
-    public ResponseEntity<LoginRequest> getAccountsCards(@PathVariable Long id) {
+    @PostMapping("/student/resetpassword/{ProfileId}")
+    public ResponseEntity<String> resetpassword( @PathVariable Long ProfileId) {
+        adminMapper.resetpassword(ProfileId);
+        // 1. Validate file
+        return ResponseEntity.ok("student added successfully.");
+    }
+    @GetMapping("/account-card/{ProfileId}")
+    public ResponseEntity<LoginRequest> getAccountsCards(@PathVariable Long ProfileId) {
         // List<UserCredential> accounts = userCredentialRepo.findAll();
-        LoginRequest loginData = adminMapper.getloginData(id);
+        LoginRequest loginData = adminMapper.getloginData(ProfileId);
         return ResponseEntity.ok(loginData);
     }
 
-    @GetMapping("/accounts-cards-pdf/{id}")
-    public ResponseEntity<byte[]> downloadCardsPdf(@PathVariable Long id) throws IOException {
+    @GetMapping("/accounts-cards-pdf/{batchId}")
+    public ResponseEntity<byte[]> downloadCardsPdf(@PathVariable Long batchId) throws IOException {
         // List<UserCredential> accounts = userCredentialRepo.findAll();
-        byte[] pdfBytes = adminMapper.generateAccountCards(id);
+        byte[] pdfBytes = adminMapper.generateAccountCards(batchId);
 
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=accounts_cards.pdf")

@@ -117,10 +117,10 @@ public class AccountService {
         return password.toString();
     }
 
-    public byte[] generateAccountCards(Long id) {
-        List<UserCredential> userCredentials = userCredentialRepo.findByTalentBatchId(id);
+    public byte[] generateAccountCards(Long batchId) {
+        List<UserCredential> userCredentials = userCredentialRepo.findByTalentBatchId(batchId);
         if (userCredentials.isEmpty()) {
-            throw new RuntimeException("Batch not found with id: " + id);
+            throw new RuntimeException("Batch not found with id: " + batchId);
         }
         try (PDDocument document = new PDDocument()) {
 
@@ -200,18 +200,18 @@ public class AccountService {
         }
     }
 
-    public void addUser(UserDto userDto, Long id) {
-        BatchRes batch = studentBatchService.bachInfoOff(id);
+    public void addUser(UserDto userDto, Long batchId) {
+        BatchRes batch = studentBatchService.bachInfoOff(batchId);
         String season = batch.getSeason();
         int year = batch.getYear();
 
         String password = generateUniquePassword();
-        UserCredential userCredential = createUserCredential(userDto.getUserName(), password, id, season, year);
+        UserCredential userCredential = createUserCredential(userDto.getUserName(), password, batchId, season, year);
         userCredentialRepo.save(userCredential);
     }
 
-    public LoginRequest getloginData(Long id) {
-        UserCredential userCredential = userCredentialRepo.findById(id)
+    public LoginRequest getloginData(Long ProfileId) {
+        UserCredential userCredential = userCredentialRepo.findByProfileId(ProfileId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return new LoginRequest(userCredential.getUsername(), userCredential.getPassword());
     }
@@ -223,5 +223,12 @@ public class AccountService {
         userCredential.setPassword(password);
         userCredential.setTalentBatchId(batchId);
         return userCredential;
+    }
+
+    public void resetpassword(Long profileId) {
+        UserCredential userCredential = userCredentialRepo.findByProfileId(profileId)
+        .orElseThrow(() -> new RuntimeException("User not found"));
+        userCredential.setPassword("123456789");
+        userCredentialRepo.save(userCredential);
     }
 }
