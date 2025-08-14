@@ -46,7 +46,7 @@ public class BatchController {
     }
 
      // Get all Departments
-    @GetMapping
+    @GetMapping("/departments")
     public ResponseEntity<List<Department>> getAllDepartments() {
         return ResponseEntity.ok().body(batchMapper.getAllDepartments());
     }
