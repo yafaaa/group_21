@@ -52,7 +52,7 @@ public class AdminController {
     }
 
     @PostMapping("/student/add/{batchId}")
-    public ResponseEntity<String> uploadTeachers(@RequestBody UserDto userDto, @PathVariable Long batchId) {
+    public ResponseEntity<String> addeuser(@RequestBody UserDto userDto, @PathVariable Long batchId) {
         adminMapper.addUser(userDto, batchId);
         // 1. Validate file
         return ResponseEntity.ok("student added successfully.");
