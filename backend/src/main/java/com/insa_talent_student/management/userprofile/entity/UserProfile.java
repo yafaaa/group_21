@@ -3,6 +3,8 @@ package com.insa_talent_student.management.userprofile.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -25,7 +27,10 @@ public class UserProfile {
     private String sex;
 
     private String grade;
-    private List<TechStack> techStacks;
+
+    @OneToMany
+    @JoinColumn(name = "user_profile_id")
+    private List<TechStack> techStacks = new ArrayList<>();
 
     private String familyPhone;
     private String address;
