@@ -21,8 +21,8 @@ A web-based talent management system built for INSA (Information Network Securit
 | Backend     | Node.js, Express |
 | Frontend    | React.js (or HTML/CSS/JS if not React) |
 | Database    | PostgreSQL / MySQL |
-| ORM / DB Tool | Sequelize / Knex.js |
-| Authentication | JWT / Passport.js |
+| ORM / DB Tool | Sequelize 
+| Authentication | JWT /
 | Hosting     | <e.g., Render, Vercel, Heroku> |
 | Other Tools | dotenv, nodemailer, bcrypt, etc. |
 
