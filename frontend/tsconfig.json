@@ -1,7 +1,23 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ]
+  "compilerOptions": {
+    "target": "ESNext",                        // Use modern JS output
+    "useDefineForClassFields": true,          // Required for class fields in ESNext
+    "module": "ESNext",                       // Modern module output (for Vite)
+    "moduleResolution": "Bundler",            // Optimal for Vite + ESM
+    "lib": ["DOM", "DOM.Iterable", "ESNext"], // Browser + modern JS APIs
+    "allowJs": false,                          // Disable .js files in compilation
+    "jsx": "react-jsx",                        // Use the new JSX transform
+    "strict": true,                            // Enable strict type checking
+    "esModuleInterop": true,                   // Enables default imports from CommonJS
+    "skipLibCheck": true,  
+    "verbatimModuleSyntax": false,                    // Skip checking type definitions in node_modules
+    "forceConsistentCasingInFileNames": true ,  // Prevent import issues on case-sensitive file systems
+    // ✅ ADD THESE HERE:
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["*"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }

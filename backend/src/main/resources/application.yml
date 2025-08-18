@@ -5,9 +5,9 @@ spring:
 #     resources:
 #       static-locations: file:/uploads/game-images/ # Docker won't see Windows path, fix below  rozp wavi wmns olrx
   datasource:
-    url: jdbc:mysql://localhost:3306/bingo
+    url: jdbc:mysql://localhost:3306/insa
     username: root
-    password: root
+    password: 12345678
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:   
