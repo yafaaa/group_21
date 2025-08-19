@@ -9,6 +9,7 @@ import ManageCenter from '@/pages/admin/ManageCenter';
 import { UserRole } from '@/constants';
 import { ProtectedRoute } from './ProtectedRoute';
 import Layout from '@/pages/admin/Layout';
+import AdminDashboard from '@/pages/admin/AdminDashboard';
 
 const VerificationGuard = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
@@ -29,8 +30,9 @@ const AppRoutes = () => {
       {/* <Navbar /> */}
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/student-dashboard" element={<Home />} />
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
          {/* Protected Admin Route */}
         <Route 
           path="/admin" 

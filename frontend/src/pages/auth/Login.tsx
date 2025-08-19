@@ -29,12 +29,12 @@ const Login = () => {
         console.log("uyfkuyfuyh",role);
         
       // Navigate based on role
-      if (role === 'RESTAURANT_OWNER') {
-        navigate('/dashboard'); // change to your restaurant owner's dashboard route
+      if (role === 'MENTOR') {
+        navigate('/mentor-dashboard'); // change to your mentor's dashboard route
       } else if (role === 'ADMIN') {
-        navigate('/admin'); // change to your admin panel route
+        navigate('/admin-dashboard'); // change to your admin panel route
       } else {
-        navigate('/'); // fallback
+        navigate('/student-dashboard'); // fallback
       }
       },
       onError: (err) => {
@@ -49,13 +49,13 @@ const Login = () => {
         <h3 className="text-2xl font-semibold text-dark mb-6 text-center">Sign In</h3>
         <form noValidate onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-dark">Email</label>
+            <label className="block text-dark">Username</label>
             <input
               type="text"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="Enter your email address"
+              placeholder="Enter your Username"
               required
               className="w-full px-4 py-2 border border-gray-300 rounded-md 
                          focus:outline-none focus:ring-2 focus:ring-accent"
@@ -91,12 +91,12 @@ const Login = () => {
             {isPending ? "Loading..." : "Login"}
           </button>
         </form>
-        <p className="mt-4 text-center text-gray-600">
+        {/* <p className="mt-4 text-center text-gray-600">
           <Link to="/forgot-password" className="text-accent hover:underline">Forgot password?</Link>
         </p>
         <p className="mt-4 text-center text-gray-600">
           New here? <Link to="/register" className="text-accent hover:underline">Sign up</Link>
-        </p>
+        </p> */}
       </div>
     </div>
   );
