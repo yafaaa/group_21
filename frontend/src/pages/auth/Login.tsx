@@ -2,14 +2,20 @@
 import React, { useState } from 'react';
 import { useLogin } from '@/hooks/useAuth';
 import { useAuth } from '@/context/AuthContext';
-import { useNavigate, Link, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { LoginRequest } from '@/types';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Loader2, Eye, EyeOff } from 'lucide-react';
 
 const Login = () => {
   const { login } = useAuth();
   const { mutate, isPending, isError } = useLogin();
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate(); // <-- Initialize navigate
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState<LoginRequest>({
     email: '',
@@ -23,80 +29,117 @@ const Login = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     mutate(formData, {
-      onSuccess: (res) => {
-        login(res.data.token,res.data.u); // Save token globally
+      onSuccess: (res: { data: { token: string; u: any; role: any; }; }) => {
+        login(res.data.token, res.data.u);
         const role = res.data.role;
-        console.log("uyfkuyfuyh",role);
         
-      // Navigate based on role
-      if (role === 'MENTOR') {
-        navigate('/mentor-dashboard'); // change to your mentor's dashboard route
-      } else if (role === 'ADMIN') {
-        navigate('/admin-dashboard'); // change to your admin panel route
-      } else {
-        navigate('/student-dashboard'); // fallback
-      }
+        // Navigate based on role
+        if (role === 'MENTOR') {
+          navigate('/mentor-dashboard');
+        } else if (role === 'ADMIN') {
+          navigate('/admin-dashboard');
+        } else {
+          navigate('/student-dashboard');
+        }
       },
-      onError: (err) => {
+      onError: (err: any) => {
         console.error(err);
       },
     });
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
-    <div className="flex items-center justify-center min-h-screen bg-primary">
-      <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-lg border border-gray-200">
-        <h3 className="text-2xl font-semibold text-dark mb-6 text-center">Sign In</h3>
-        <form noValidate onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-dark">Username</label>
-            <input
-              type="text"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Enter your Username"
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-md 
-                         focus:outline-none focus:ring-2 focus:ring-accent"
-            />
+    <div className="min-h-screen bg-gradient-subtle flex items-center justify-center p-4">
+      <div className="w-full max-w-md space-y-8">
+        {/* Header */}
+        <div className="text-center">
+          <div className="flex justify-center mb-6">
+            <div className="p-4 rounded-full shadow-medium">
+              <img src="favicon1.ico" alt="Logo" className="h-12 w-12" />
+            </div>
           </div>
+          <h1 className="text-3xl font-bold text-foreground">
+            INSA Talent Center
+          </h1>
+          <p className="text-muted-foreground mt-2">
+            Access your dashboard
+          </p>
+        </div>
 
-          <div className="mb-4 relative">
-            <label className="block text-dark">Password</label>
-            <input
-              type={showPassword ? "text" : "password"}
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Password"
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-md 
-                         focus:outline-none focus:ring-2 focus:ring-accent"
-            />
-            <span
-              className="absolute top-9 right-3 text-sm text-gray-600 cursor-pointer"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? "Hide" : "Show"}
-            </span>
-          </div>
+        {/* Login Form */}
+        <Card className="shadow-medium border-0">
+          <CardHeader className="text-center pb-4">
+            <CardTitle className="text-xl">Sign In</CardTitle>
+            <CardDescription>
+              Enter your credentials to continue
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {isError && (
+                <Alert variant="destructive">
+                  <AlertDescription>Login failed. Please try again.</AlertDescription>
+                </Alert>
+              )}
 
-          {isError && <p className="text-red-500 text-sm mb-3">Login failed. Please try again.</p>}
-          <button
-            type="submit"
-            disabled={isPending}
-            className="w-full bg-orange-600 text-white py-2 rounded-full shadow-lg hover:bg-orange-700 transition-all duration-300"
-          >
-            {isPending ? "Loading..." : "Login"}
-          </button>
-        </form>
-        {/* <p className="mt-4 text-center text-gray-600">
-          <Link to="/forgot-password" className="text-accent hover:underline">Forgot password?</Link>
-        </p>
-        <p className="mt-4 text-center text-gray-600">
-          New here? <Link to="/register" className="text-accent hover:underline">Sign up</Link>
-        </p> */}
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Username</Label>
+                  <Input
+                    id="email"
+                    type="text"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="Enter your Username"
+                    required
+                    className="bg-background"
+                  />
+                </div>
+
+                <div className="space-y-2 relative">
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Enter your password"
+                    required
+                    className="bg-background pr-10"
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-9 text-gray-500 hover:text-gray-700"
+                    onClick={togglePasswordVisibility}
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isPending}
+              >
+                {isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Signing in...
+                  </>
+                ) : (
+                  'Sign In'
+                )}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
