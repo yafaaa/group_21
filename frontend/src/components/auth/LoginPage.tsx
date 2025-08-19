@@ -1,7 +1,7 @@
 // src/pages/Login.tsx
 import React, { useState } from 'react';
 import { useLogin } from '@/hooks/useAuth';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from "react-router-dom";
 import { LoginRequest } from '@/types';
 import { Button } from '@/components/ui/button';
@@ -29,7 +29,7 @@ const Login = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     mutate(formData, {
-      onSuccess: (res: { data: { token: string; u: any; role: any; }; }) => {
+      onSuccess: (res) => {
         login(res.data.token, res.data.u);
         const role = res.data.role;
         
@@ -42,7 +42,7 @@ const Login = () => {
           navigate('/student-dashboard');
         }
       },
-      onError: (err: any) => {
+      onError: (err) => {
         console.error(err);
       },
     });
@@ -59,7 +59,7 @@ const Login = () => {
         <div className="text-center">
           <div className="flex justify-center mb-6">
             <div className="p-4 rounded-full shadow-medium">
-              <img src="favicon1.ico" alt="Logo" className="h-12 w-12" />
+              <img src="favicon.ico" alt="Logo" className="h-12 w-12" />
             </div>
           </div>
           <h1 className="text-3xl font-bold text-foreground">
