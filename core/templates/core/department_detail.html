@@ -1,0 +1,12 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>{{ department.name }}</title>
+</head>
+<body>
+  <h1>{{ department.name }} ({{ department.code }})</h1>
+  <p>{{ department.description }}</p>
+  <p><a href="{% url 'core:departments_list' %}">Back to departments</a></p>
+</body>
+</html>

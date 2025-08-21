@@ -1,0 +1,551 @@
+{% load core_extras %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Record Attendance - Summer Camp Management</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        
+        .card-header {
+            background: #667eea;
+            color: white;
+            padding: 15px 20px;
+            margin: -30px -30px 20px -30px;
+            border-radius: 10px 10px 0 0;
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .date-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .students-grid {
+            display: block;
+            margin-bottom: 30px;
+        }
+        
+        .student-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 15px;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: white;
+        }
+        
+        .student-row:hover {
+            border-color: #667eea;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+        }
+        
+        .student-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .student-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        
+        .student-id {
+            font-size: 12px;
+            color: #666;
+            background: #f5f5f5;
+            padding: 2px 8px;
+            border-radius: 4px;
+            display: inline-block;
+            width: fit-content;
+        }
+        
+        .attendance-column {
+            text-align: center;
+        }
+        
+        .attendance-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        
+        .attendance-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+        
+        .attendance-headers {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .header-label {
+            text-align: center;
+            font-size: 14px;
+            color: #667eea;
+        }
+        
+        .bulk-actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .bulk-btn {
+            padding: 8px 12px;
+            border: 1px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .bulk-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        .summary {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .summary-numbers {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .summary-item {
+            text-align: center;
+        }
+        
+        .summary-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .summary-label {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .department-filter {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 1px solid #dee2e6;
+            margin: -30px -30px 20px -30px;
+            border-radius: 0;
+        }
+        
+        .department-filter label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .department-filter select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            min-width: 250px;
+            background: white;
+        }
+        
+        .filter-info {
+            margin-left: 15px;
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        /* Department Selection Styles */
+        .department-selection {
+            margin: 2rem 0;
+        }
+        .department-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .department-card {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .department-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+            text-decoration: none;
+            color: inherit;
+        }
+        .department-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        .department-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #343a40;
+        }
+        .department-count {
+            color: #6c757d;
+            font-size: 0.95rem;
+        }
+        .back-link {
+            margin-bottom: 1rem;
+        }
+        
+        /* Dynamic grid for different numbers of attendance types */
+        .dynamic-grid {
+            display: grid;
+        }
+        
+        /* Single column (department-specific attendance) */
+        .dynamic-grid:has(> .attendance-column:nth-child(2):last-child),
+        .dynamic-grid:has(> .header-label:nth-child(2):last-child) {
+            grid-template-columns: 2fr 1fr;
+        }
+        
+        /* Two columns */
+        .dynamic-grid:has(> .attendance-column:nth-child(3):last-child),
+        .dynamic-grid:has(> .header-label:nth-child(3):last-child) {
+            grid-template-columns: 2fr 1fr 1fr;
+        }
+        
+        /* Three columns (default) */
+        .dynamic-grid:has(> .attendance-column:nth-child(4):last-child),
+        .dynamic-grid:has(> .header-label:nth-child(4):last-child) {
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+        }
+        
+        /* Fallback for older browsers without :has() support */
+        @supports not (selector(:has(*))) {
+            .dynamic-grid {
+                grid-template-columns: 2fr repeat(auto-fit, minmax(80px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>📝 Record Attendance</h1>
+            <div>
+                <a href="{% url 'core:attendance_list' %}" class="btn btn-secondary">📋 View Records</a>
+                <a href="{% url 'core:index' %}" class="btn btn-secondary">🏠 Dashboard</a>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                📅 Daily Attendance - {{ date|date:"l, F d, Y" }}
+                {% if selected_department %}
+                    <br><small>🏛️ Recording for: {{ selected_department.name }} ({{ selected_department.code }})</small>
+                {% else %}
+                    <br><small>Select department to begin attendance recording</small>
+                {% endif %}
+            </div>
+            
+            <!-- Department Selection -->
+            {% if not selected_department %}
+                <div class="department-selection">
+                    <h3>🏛️ Select Department/Class for Attendance</h3>
+                    <p>Choose the department/class you want to record attendance for:</p>
+                    <div class="department-grid">
+                        {% for dept in departments %}
+                            <a href="?department={{ dept.id }}" class="department-card">
+                                <div class="dept-icon">
+                                    {% if dept.code == 'EMBED' %}🤖
+                                    {% elif dept.code == 'CYBER' %}🔒
+                                    {% elif dept.code == 'AERO' %}🚀
+                                    {% elif dept.code == 'DEV' %}💻
+                                    {% elif dept.code == 'PHYSICAL' %}🏃‍♂️
+                                    {% elif dept.code == 'PSYCHOLOGICAL' %}🧠
+                                    {% else %}🏛️{% endif %}
+                                </div>
+                                <div class="dept-name">{{ dept.name }}</div>
+                                <div class="dept-code">({{ dept.code }})</div>
+                                <div class="student-count">
+                                    {% with dept.students.count as count %}
+                                        {{ count }} student{{ count|pluralize }}
+                                    {% endwith %}
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% else %}
+                <!-- Department Filter -->
+                <div class="department-filter">
+                    <div class="current-department">
+                        <span class="dept-badge">
+                            {% if selected_department.code == 'EMBED' %}🤖
+                            {% elif selected_department.code == 'CYBER' %}🔒
+                            {% elif selected_department.code == 'AERO' %}🚀
+                            {% elif selected_department.code == 'DEV' %}💻
+                            {% elif selected_department.code == 'PHYSICAL' %}🏃‍♂️
+                            {% elif selected_department.code == 'PSYCHOLOGICAL' %}🧠
+                            {% else %}🏛️{% endif %}
+                            {{ selected_department.name }} ({{ selected_department.code }})
+                        </span>
+                        <a href="{% url 'core:attendance_record' %}" class="change-dept-btn">🔄 Change Department</a>
+                    </div>
+                </div>
+            {% endif %}
+            
+            {% if selected_department %}
+            
+            {% if request.method == 'POST' %}
+                <div class="success-message">
+                    ✅ Attendance has been successfully recorded for {{ date|date:"F d, Y" }}!
+                </div>
+            {% endif %}
+            
+            <div class="date-info">
+                <strong>📅 Date:</strong> {{ date|date:"F d, Y" }}<br>
+                <strong>👤 Recorded by:</strong> {{ user.get_full_name|default:user.username }}
+                {% if selected_department %}
+                    <br><strong>🏛️ Department:</strong> {{ selected_department.name }} ({{ selected_department.code }})
+                {% endif %}
+            </div>
+            
+            <form method="post" id="attendanceForm">
+                {% csrf_token %}
+                {% if selected_department %}
+                    <input type="hidden" name="department" value="{{ selected_department.id }}">
+                {% endif %}
+                
+                <div class="summary" id="summary">
+                    <div class="summary-numbers">
+                        {% for att_type, att_label in attendance_types %}
+                        <div class="summary-item">
+                            <div class="summary-number" id="{{ att_type|lower }}Count">0</div>
+                            <div class="summary-label">{{ att_label }} Present</div>
+                        </div>
+                        {% endfor %}
+                        <div class="summary-item">
+                            <div class="summary-number">{{ students|length }}</div>
+                            <div class="summary-label">Total Students</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bulk-actions">
+                    {% for att_type, att_label in attendance_types %}
+                    <button type="button" onclick="markAllType('{{ att_type }}', true)" class="bulk-btn">✅ All {{ att_label }}</button>
+                    {% endfor %}
+                </div>
+                
+                <div class="attendance-headers dynamic-grid">
+                    <div>Student</div>
+                    {% for att_type, att_label in attendance_types %}
+                    <div class="header-label">
+                        {% if att_type == 'PHYSICAL' %}🏃‍♂️{% elif att_type == 'PSYCHOLOGICAL' %}🧠{% elif att_type == 'CLASS' %}💻{% endif %}
+                        {{ att_label }}
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="students-grid">
+                    {% for student_data in students %}
+                        <div class="student-row dynamic-grid">
+                            <div class="student-info">
+                                <div class="student-name">{{ student_data.student.user.get_full_name }}</div>
+                                <div class="student-id">{{ student_data.student.student_id }}</div>
+                            </div>
+                            {% for att_type, att_label in attendance_types %}
+                            <div class="attendance-column">
+                                <input type="checkbox" 
+                                       class="attendance-checkbox" 
+                                       name="attendance_{{ att_type }}" 
+                                       value="{{ student_data.student.id }}"
+                                       id="{{ att_type|lower }}_{{ student_data.student.id }}"
+                                       {% if student_data.attendance|lookup:att_type %}checked{% endif %}
+                                       onchange="updateSummary()">
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% empty %}
+                        <p>No students found.</p>
+                    {% endfor %}
+                </div>
+                
+                <div class="actions">
+                    {% for att_type, att_label in attendance_types %}
+                    <button type="button" onclick="markAllType('{{ att_type }}', false)" class="btn btn-secondary">❌ Clear {{ att_label }}</button>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary">💾 Save Attendance</button>
+                </div>
+            </form>
+            
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- JSON data for JavaScript -->
+    {{ attendance_types|json_script:"attendance-types-data" }}
+    
+    <script>
+        // Define attendance types from Django context
+        const attendanceTypesData = JSON.parse(document.getElementById('attendance-types-data').textContent);
+        const attendanceTypes = attendanceTypesData.map(([type, label]) => ({ type, label }));
+        
+        function updateSummary() {
+            attendanceTypes.forEach(({ type, label }) => {
+                const checked = document.querySelectorAll(`input[name="attendance_${type}"]:checked`).length;
+                const countElement = document.getElementById(`${type.toLowerCase()}Count`);
+                if (countElement) {
+                    countElement.textContent = checked;
+                }
+            });
+        }
+        
+        function markAllType(attendanceType, checked) {
+            const checkboxes = document.querySelectorAll(`input[name="attendance_${attendanceType}"]`);
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = checked;
+            });
+            updateSummary();
+        }
+        
+        // Initialize summary on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateSummary();
+        });
+    </script>
+</body>
+</html>

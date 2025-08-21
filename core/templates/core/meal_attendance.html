@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Record Meal Attendance - Summer Camp Management</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        
+        .card-header {
+            background: #28a745;
+            color: white;
+            padding: 15px 20px;
+            margin: -30px -30px 20px -30px;
+            border-radius: 10px 10px 0 0;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        .date-info {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #155724;
+            font-weight: 600;
+        }
+        
+        .meal-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .meal-headers {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .header-label {
+            text-align: center;
+            font-size: 14px;
+            color: #28a745;
+        }
+        
+        .student-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 15px;
+            padding: 15px;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        
+        .student-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .student-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        
+        .student-id {
+            font-size: 12px;
+            color: #666;
+            background: #f8f9fa;
+            padding: 2px 8px;
+            border-radius: 4px;
+            display: inline-block;
+            width: fit-content;
+        }
+        
+        .meal-column {
+            text-align: center;
+        }
+        
+        .meal-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #28a745;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        
+        .meal-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #28a745;
+        }
+        
+        .bulk-actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .bulk-btn {
+            padding: 12px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .bulk-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+        
+        .summary {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .summary-numbers {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .summary-item {
+            text-align: center;
+        }
+        
+        .summary-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #28a745;
+        }
+        
+        .summary-label {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .scrollable-list {
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 10px;
+        }
+        
+        .meal-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .breakfast { background: #fff3cd; color: #856404; }
+        .lunch { background: #d1ecf1; color: #0c5460; }
+        .dinner { background: #f8d7da; color: #721c24; }
+        
+        .department-filter {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 1px solid #dee2e6;
+            margin: -30px -30px 20px -30px;
+            border-radius: 0;
+        }
+        
+        .department-filter label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .department-filter select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            min-width: 250px;
+            background: white;
+        }
+        
+        .filter-info {
+            margin-left: 15px;
+            color: #28a745;
+            font-weight: 600;
+        }
+        
+        /* Student Search Styles */
+        .search-section {
+            background: #f8f9fa;
+            border: 2px solid #28a745;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .search-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .search-input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .search-input-group label {
+            font-weight: 600;
+            color: #28a745;
+            white-space: nowrap;
+        }
+        
+        #studentSearch {
+            flex: 1;
+            min-width: 250px;
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: monospace;
+            background: white;
+            transition: border-color 0.3s ease;
+        }
+        
+        #studentSearch:focus {
+            outline: none;
+            border-color: #28a745;
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+        }
+        
+        #studentSearch.auto-focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.3);
+            animation: auto-focus-pulse 1s ease-in-out;
+        }
+        
+        @keyframes auto-focus-pulse {
+            0% { box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.3); }
+            50% { box-shadow: 0 0 0 6px rgba(40, 167, 69, 0.2); }
+            100% { box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1); }
+        }
+        
+        #clearSearch {
+            padding: 8px 12px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+        
+        #clearSearch:hover {
+            background: #c82333;
+        }
+        
+        .search-status {
+            font-size: 14px;
+            font-weight: 500;
+            padding: 5px 0;
+        }
+        
+        .search-status.found {
+            color: #28a745;
+        }
+        
+        .search-status.not-found {
+            color: #dc3545;
+        }
+        
+        .search-status.searching {
+            color: #ffc107;
+        }
+        
+        .search-status.ready-for-next {
+            color: #28a745;
+            font-weight: 600;
+            animation: ready-pulse 0.5s ease-in-out;
+        }
+        
+        @keyframes ready-pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        /* Hide students that don't match search - use visibility instead of display */
+        .student-row.hidden {
+            display: none;
+        }
+        
+        /* Highlight matched student */
+        .student-row.highlighted {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%) !important;
+            border-color: #28a745 !important;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2) !important;
+            animation: highlight-pulse 2s ease-in-out;
+        }
+        
+        /* Checkbox processing state */
+        .meal-checkbox.processing {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        
+        .meal-checkbox.success {
+            animation: checkbox-success 0.5s ease-in-out;
+        }
+        
+        @keyframes checkbox-success {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>🍽️ Meal Attendance Recording</h1>
+            <div>
+                <a href="{% url 'core:attendance_list' %}" class="btn btn-secondary">📋 View Records</a>
+                <a href="{% url 'core:index' %}" class="btn btn-secondary">🏠 Dashboard</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                🍽️ Meal Attendance - {{ date|date:"F d, Y" }}
+                <br><small>Breakfast, Lunch & Dinner</small>
+            </div>
+            
+            <!-- Student ID Search -->
+            <div class="search-section">
+                <div class="search-controls">
+                    <div class="search-input-group">
+                        <label for="studentSearch">🔍 Search Student by ID:</label>
+                        <input type="text" 
+                               id="studentSearch" 
+                               placeholder="" 
+                               autocomplete="off"
+                               oninput="filterStudentsByID(this.value)">
+                        <button type="button" id="clearSearch" onclick="clearStudentSearch()" style="display: none;">❌ Clear</button>
+                    </div>
+                    <div id="searchStatus" class="search-status"></div>
+                </div>
+            </div>
+            
+            {% if request.GET.success %}
+                <div class="success-message">
+                    ✅ Attendance recorded successfully!
+                </div>
+            {% endif %}
+            
+            <div class="date-info">
+                📅 Recording attendance for <strong>{{ date|date:"l, F d, Y" }}</strong>
+            </div>
+            
+            <form method="post" id="attendanceForm">
+                {% csrf_token %}
+                
+                <div class="summary" id="summary">
+                    <div class="summary-numbers">
+                        <div class="summary-item">
+                            <div class="summary-number" id="breakfastCount">0</div>
+                            <div class="summary-label">Breakfast</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-number" id="lunchCount">0</div>
+                            <div class="summary-label">Lunch</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-number" id="dinnerCount">0</div>
+                            <div class="summary-label">Dinner</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bulk-actions">
+                    <button type="button" class="bulk-btn" onclick="markAllMeal('BREAKFAST')">
+                        🌅 Mark All Breakfast
+                    </button>
+                    <button type="button" class="bulk-btn" onclick="markAllMeal('LUNCH')">
+                        ☀️ Mark All Lunch
+                    </button>
+                    <button type="button" class="bulk-btn" onclick="markAllMeal('DINNER')">
+                        🌙 Mark All Dinner
+                    </button>
+                </div>
+                
+                <div class="meal-headers">
+                    <div class="header-label">👤 Student</div>
+                    <div class="header-label">🌅 Breakfast</div>
+                    <div class="header-label">☀️ Lunch</div>
+                    <div class="header-label">🌙 Dinner</div>
+                </div>
+                
+                <div class="scrollable-list">
+                    {% for student_data in students %}
+                        <div class="student-row">
+                            <div class="student-info">
+                                <div class="student-name">{{ student_data.student.user.get_full_name }}</div>
+                                <div class="student-id">{{ student_data.student.student_id }}</div>
+                            </div>
+                            {% for meal_type, meal_display in meal_types %}
+                                <div class="meal-column">
+                                    <input 
+                                        type="checkbox" 
+                                        class="meal-checkbox" 
+                                        name="meal_{{ student_data.student.id }}_{{ meal_type }}"
+                                        data-student="{{ student_data.student.id }}" 
+                                        data-meal="{{ meal_type }}"
+                                        data-meal-name="{{ meal_display }}"
+                                        {% if meal_type == 'BREAKFAST' and student_data.meals.BREAKFAST %}checked
+                                        {% elif meal_type == 'LUNCH' and student_data.meals.LUNCH %}checked
+                                        {% elif meal_type == 'DINNER' and student_data.meals.DINNER %}checked{% endif %}
+                                    >
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Update summary counts
+        function updateSummary() {
+            const breakfastCount = document.querySelectorAll('input[data-meal="BREAKFAST"]:checked').length;
+            const lunchCount = document.querySelectorAll('input[data-meal="LUNCH"]:checked').length;
+            const dinnerCount = document.querySelectorAll('input[data-meal="DINNER"]:checked').length;
+            
+            document.getElementById('breakfastCount').textContent = breakfastCount;
+            document.getElementById('lunchCount').textContent = lunchCount;
+            document.getElementById('dinnerCount').textContent = dinnerCount;
+        }
+        
+        // Toggle individual meal attendance
+        function toggleMealAttendance(checkbox) {
+            const studentId = checkbox.dataset.student;
+            const mealType = checkbox.dataset.meal;
+            const action = checkbox.checked ? 'mark_present' : 'mark_absent';
+            
+            console.log('Toggling meal attendance:', { studentId, mealType, action, checked: checkbox.checked });
+            
+            // Add processing state
+            checkbox.classList.add('processing');
+            
+            // Send AJAX request to update attendance
+            fetch('', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: `action=${action}&student_id=${studentId}&meal_type=${mealType}`
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data);
+                checkbox.classList.remove('processing');
+                
+                if (data.success) {
+                    // Add success animation
+                    checkbox.classList.add('success');
+                    setTimeout(() => checkbox.classList.remove('success'), 500);
+                    
+                    updateSummary();
+                    console.log('Attendance updated successfully');
+                    
+                    // Auto-workflow: Clear search and focus for next student
+                    setTimeout(() => {
+                        clearSearchAndFocusForNext();
+                    }, 600); // Wait for success animation to complete
+                    
+                } else {
+                    console.error('Failed to update attendance - server returned success: false');
+                    checkbox.checked = !checkbox.checked; // Revert checkbox
+                }
+            })
+            .catch(error => {
+                console.error('Error updating attendance:', error);
+                checkbox.classList.remove('processing');
+                checkbox.checked = !checkbox.checked; // Revert checkbox
+            });
+        }
+        
+        // Mark all students for a specific meal
+        function markAllMeal(mealType) {
+            const checkboxes = document.querySelectorAll(`input[data-meal="${mealType}"]`);
+            const studentIds = [];
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = true;
+                studentIds.push(checkbox.dataset.student);
+            });
+            
+            // Send bulk update request
+            const formData = new FormData();
+            formData.append('action', `bulk_${mealType.toLowerCase()}`);
+            formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+            
+            studentIds.forEach(id => {
+                formData.append('student_ids[]', id);
+            });
+            
+            fetch('', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    updateSummary();
+                } else {
+                    console.error('Failed to update bulk attendance');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+        
+        // Initialize summary on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateSummary();
+            
+            // Use event delegation for checkbox handling to ensure it works after search
+            document.addEventListener('change', function(event) {
+                if (event.target.classList.contains('meal-checkbox')) {
+                    console.log('Checkbox clicked via event delegation:', {
+                        target: event.target,
+                        student: event.target.dataset.student,
+                        meal: event.target.dataset.meal,
+                        checked: event.target.checked
+                    });
+                    toggleMealAttendance(event.target);
+                }
+            });
+            
+            // Also add click event as backup
+            document.addEventListener('click', function(event) {
+                if (event.target.classList.contains('meal-checkbox')) {
+                    console.log('Checkbox clicked via click event:', event.target);
+                    // Let the change event handle it
+                }
+            });
+        });
+        
+        // Student ID Search Functions
+        function filterStudentsByID(searchValue) {
+            const studentRows = document.querySelectorAll('.student-row');
+            const searchStatus = document.getElementById('searchStatus');
+            const clearButton = document.getElementById('clearSearch');
+            
+            // Remove any existing highlights
+            studentRows.forEach(row => {
+                row.classList.remove('highlighted', 'hidden');
+            });
+            
+            if (searchValue.trim() === '') {
+                searchStatus.textContent = '';
+                searchStatus.className = 'search-status';
+                clearButton.style.display = 'none';
+                return;
+            }
+            
+            clearButton.style.display = 'inline-block';
+            
+            // Normalize search value - remove leading zeros and non-digits
+            const normalizedSearch = searchValue.replace(/\D/g, '').replace(/^0+/, '') || '0';
+            
+            let foundStudents = [];
+            let exactMatch = null;
+            
+            studentRows.forEach(row => {
+                const studentIdElement = row.querySelector('.student-id');
+                if (studentIdElement) {
+                    const fullStudentId = studentIdElement.textContent.trim();
+                    // Extract just the number part from IDs like "DTEST001", "DTEST005", etc.
+                    const numberPart = fullStudentId.replace(/\D/g, '').replace(/^0+/, '') || '0';
+                    
+                    if (numberPart === normalizedSearch) {
+                        // Exact match
+                        exactMatch = row;
+                        foundStudents.push(row);
+                        row.classList.add('highlighted');
+                        console.log('Exact match found:', fullStudentId);
+                    } else if (numberPart.includes(normalizedSearch)) {
+                        // Partial match
+                        foundStudents.push(row);
+                        console.log('Partial match found:', fullStudentId);
+                    } else {
+                        // No match - hide
+                        row.classList.add('hidden');
+                    }
+                }
+            });
+            
+            // Update search status
+            if (exactMatch) {
+                const studentName = exactMatch.querySelector('.student-name').textContent;
+                const studentId = exactMatch.querySelector('.student-id').textContent;
+                searchStatus.textContent = `✅ Found exact match: ${studentName} (${studentId})`;
+                searchStatus.className = 'search-status found';
+                
+                // Scroll to the highlighted student
+                setTimeout(() => {
+                    exactMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            } else if (foundStudents.length > 0) {
+                searchStatus.textContent = `🔍 Found ${foundStudents.length} student(s) matching "${searchValue}"`;
+                searchStatus.className = 'search-status found';
+            } else {
+                searchStatus.textContent = `❌ No students found with ID containing "${searchValue}"`;
+                searchStatus.className = 'search-status not-found';
+            }
+            
+            console.log(`Search completed: ${foundStudents.length} matches for "${searchValue}"`);
+        }
+        
+        function clearStudentSearch() {
+            const searchInput = document.getElementById('studentSearch');
+            const searchStatus = document.getElementById('searchStatus');
+            const clearButton = document.getElementById('clearSearch');
+            const studentRows = document.querySelectorAll('.student-row');
+            
+            searchInput.value = '';
+            searchStatus.textContent = '';
+            searchStatus.className = 'search-status';
+            clearButton.style.display = 'none';
+            
+            // Show all students and remove highlights
+            studentRows.forEach(row => {
+                row.classList.remove('highlighted', 'hidden');
+            });
+            
+            searchInput.focus();
+        }
+        
+        // Auto-workflow function for next student
+        function clearSearchAndFocusForNext() {
+            const searchInput = document.getElementById('studentSearch');
+            const searchStatus = document.getElementById('searchStatus');
+            const clearButton = document.getElementById('clearSearch');
+            const studentRows = document.querySelectorAll('.student-row');
+            
+            // Clear search input
+            searchInput.value = '';
+            clearButton.style.display = 'none';
+            
+            // Show all students and remove highlights
+            studentRows.forEach(row => {
+                row.classList.remove('highlighted', 'hidden');
+            });
+            
+            // Update status to prompt for next student
+            searchStatus.textContent = '✅ Saved! Ready for next student ID...';
+            searchStatus.className = 'search-status ready-for-next';
+            
+            // Focus search input for next student with visual enhancement
+            searchInput.focus();
+            searchInput.classList.add('auto-focus');
+            
+            // Clear the visual enhancements after animation
+            setTimeout(() => {
+                searchInput.classList.remove('auto-focus');
+                searchStatus.textContent = '';
+                searchStatus.className = 'search-status';
+            }, 2000);
+        }
+        
+        // Add Enter key support for search
+        document.getElementById('studentSearch').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                const highlighted = document.querySelector('.student-row.highlighted');
+                if (highlighted) {
+                    highlighted.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Departments</title>
+</head>
+<body>
+  <h1>Departments</h1>
+  <ul>
+    {% for dept in departments %}
+      <li><a href="{% url 'core:department_detail' dept.pk %}">{{ dept.name }} ({{ dept.code }})</a></li>
+    {% empty %}
+      <li>No departments found.</li>
+    {% endfor %}
+  </ul>
+  <p><a href="{% url 'core:index' %}">Back</a></p>
+</body>
+</html>

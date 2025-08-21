@@ -1,0 +1,232 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Summer Camp Management System</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      margin: 40px; 
+      background-color: #f8f9fa;
+    }
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .auth-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .user-badge {
+      background: rgba(255,255,255,0.2);
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+    }
+    .logout-btn {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .logout-btn:hover {
+      background: rgba(255,255,255,0.3);
+    }
+    .login-btn {
+      background: #28a745;
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+    .import-section { 
+      background-color: #e3f2fd; 
+      padding: 20px; 
+      border-radius: 8px; 
+      margin: 20px 0; 
+    }
+    .import-section h2 { 
+      color: #1976d2; 
+      margin-top: 0; 
+    }
+    .dashboard-section {
+      background-color: #fff3e0;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    .dashboard-section h2 {
+      color: #f57c00;
+      margin-top: 0;
+    }
+    a { 
+      color: #1976d2; 
+      text-decoration: none; 
+    }
+    a:hover { 
+      text-decoration: underline; 
+    }
+    .role-warning {
+      background-color: #fff3cd;
+      border: 1px solid #ffeaa7;
+      color: #856404;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 20px 0;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .stat-number {
+      font-size: 24px;
+      font-weight: bold;
+      color: #667eea;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🏫 Summer Camp Management System</h1>
+    <div class="auth-info">
+      {% if user.is_authenticated %}
+        <span class="user-badge">
+          👤 {{ user.get_full_name|default:user.username }} 
+          ({{ user.get_role_display }})
+        </span>
+        <a href="{% url 'core:logout' %}" class="logout-btn">🚪 Logout</a>
+      {% else %}
+        <a href="{% url 'core:login' %}" class="login-btn">🔐 Login</a>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if user.is_authenticated %}
+    <!-- Role-based Dashboard Links -->
+    <div class="dashboard-section">
+      <h2>🎯 Your Dashboard</h2>
+      <ul>
+        {% if user.role == 'ADMIN' %}
+          <li><strong><a href="{% url 'core:admin_dashboard' %}">🛡️ Admin Dashboard</a></strong> - System overview and management</li>
+        {% elif user.role == 'MENTOR' %}
+          <li><strong><a href="{% url 'core:mentor_dashboard' %}">👨‍🏫 Mentor Dashboard</a></strong> - Manage your students and departments</li>
+        {% elif user.role == 'STUDENT' %}
+          <li><strong><a href="{% url 'core:student_dashboard' %}">👨‍🎓 Student Dashboard</a></strong> - View your profile and information</li>
+        {% elif user.role == 'CAFE' %}
+          <li><strong><a href="{% url 'core:cafe_dashboard' %}">🍽️ Cafe Dashboard</a></strong> - Meal service management</li>
+        {% endif %}
+      </ul>
+    </div>
+
+    <!-- Role-based content -->
+    {% if user.role == 'ADMIN' or user.role == 'MENTOR' %}
+      <div class="import-section">
+        <h2>📚 Student Management</h2>
+        <ul>
+          {% if user.role == 'ADMIN' %}
+            <li><strong><a href="{% url 'core:csv_import' %}">📁 Import Students from CSV</a></strong> - Bulk import students with auto-generated credentials</li>
+          {% endif %}
+          <li><a href="{% url 'core:students_list' %}">👥 View Students ({{ students_count }})</a></li>
+          {% if user.role == 'ADMIN' or user.role == 'MENTOR' %}
+            <li><a href="{% url 'core:student_add' %}">➕ Add Single Student</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    {% endif %}
+
+    <!-- System Statistics -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number">{{ departments_count }}</div>
+        <div>Departments</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ students_count }}</div>
+        <div>Students</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ mentors_count }}</div>
+        <div>Mentors</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ attendance_count }}</div>
+        <div>Attendance Records</div>
+      </div>
+    </div>
+
+    <!-- Browse Data (role-based access) -->
+    <h2>📊 Browse Data</h2>
+    <ul>
+      <li><a href="{% url 'core:departments_list' %}">🏛️ Departments ({{ departments_count }})</a></li>
+      {% if user.role == 'ADMIN' %}
+        <li><a href="{% url 'core:mentors_list' %}">👨‍🏫 Mentors ({{ mentors_count }})</a></li>
+      {% endif %}
+      {% if user.role == 'ADMIN' or user.role == 'MENTOR' %}
+        <li><a href="{% url 'core:attendance_list' %}">📝 Attendance Records ({{ attendance_count }})</a></li>
+      {% endif %}
+    </ul>
+
+  {% else %}
+    <!-- Not logged in -->
+    <div class="role-warning">
+      <h3>🔐 Please Log In</h3>
+      <p>You need to log in to access the summer camp management features.</p>
+      <p>
+        <a href="{% url 'core:login' %}">🔐 Login</a> | 
+        <a href="{% url 'core:register' %}">📝 Create Account</a>
+      </p>
+    </div>
+
+    <h2>📊 System Overview</h2>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number">{{ departments_count }}</div>
+        <div>Departments</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ students_count }}</div>
+        <div>Students</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ mentors_count }}</div>
+        <div>Mentors</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ attendance_count }}</div>
+        <div>Attendance Records</div>
+      </div>
+    </div>
+
+    <h2>🏫 About Summer Camp Management System</h2>
+    <p>This system helps manage:</p>
+    <ul>
+      <li>👥 Student enrollment and profiles</li>
+      <li>🏠 Dorm assignments (4 students per dorm)</li>
+      <li>🍽️ Meal tracking and cafe operations</li>
+      <li>👨‍🏫 Mentor assignments and student monitoring</li>
+      <li>📝 Attendance tracking (meals, classes, activities)</li>
+      <li>🏛️ Department management</li>
+    </ul>
+  {% endif %}
+</body>
+</html>

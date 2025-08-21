@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>{% if object %}Edit Department{% else %}Add Department{% endif %}</title>
+</head>
+<body>
+  <h1>{% if object %}Edit Department{% else %}Add Department{% endif %}</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+  </form>
+  <p><a href="{% url 'core:departments_list' %}">Back to departments</a></p>
+</body>
+</html>

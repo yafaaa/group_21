@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"         .card-header {
+            background: #000000;
+            color: white;
+            padding: 15px 20px;
+            font-weight: bold;
+        }t="width=device-width, initial-scale=1.0">
+    <title>Mentor Dashboard - Summer Camp Management</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #000000 0%, #333333 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #000000;
+        }
+        
+        .stat-label {
+            color: #000000;
+            margin-top: 5px;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background: #000000;
+            color: white;
+            padding: 15px 20px;
+            font-weight: 600;
+        }
+        
+        .card-body {
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .department-list {
+            list-style: none;
+        }
+        
+        .department-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #000000;
+        }
+        
+        .department-name {
+            font-weight: bold;
+            color: #000000;
+        }
+        
+        .department-code {
+            color: #000000;
+            font-size: 14px;
+        }
+        
+        .student-item {
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .student-item:last-child {
+            border-bottom: none;
+        }
+        
+        .student-info {
+            flex: 1;
+        }
+        
+        .student-name {
+            font-weight: bold;
+            color: #000000;
+        }
+        
+        .student-id {
+            color: #000000;
+            font-size: 14px;
+        }
+        
+        .badge {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            color: white;
+        }
+        
+        .badge-success { background: #28a745; }
+        .badge-info { background: #000000; }
+        .badge-warning { background: #ffc107; }
+        .badge-primary { background: #000000; }
+        
+        .attendance-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .attendance-item:last-child {
+            border-bottom: none;
+        }
+        
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .action-btn {
+            display: block;
+            background: white;
+            color: #000000;
+            padding: 15px 20px;
+            text-decoration: none;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+            border: 2px solid #000000;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+            background: #000000;
+            color: white;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+        
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>👨‍🏫 Mentor Dashboard</h1>
+            <div class="user-info">
+                <span>Welcome, {{ user.get_full_name|default:user.username }}</span>
+                <a href="{% url 'core:logout' %}" class="logout-btn">🚪 Logout</a>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <!-- Statistics Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ mentor_departments.count }}</div>
+                <div class="stat-label">🏛️ My Departments</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ student_count }}</div>
+                <div class="stat-label">👥 My Students</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ recent_absent|length }}</div>
+                <div class="stat-label">❌ Absent Today</div>
+            </div>
+        </div>
+        
+        <!-- Main Content Grid -->
+        <div class="content-grid">
+            <!-- My Departments -->
+            <div class="card">
+                <div class="card-header">
+                    🏛️ My Departments
+                </div>
+                <div class="card-body">
+                    {% if mentor_departments %}
+                        <ul class="department-list">
+                            {% for dept in mentor_departments %}
+                                <li class="department-item">
+                                    <div class="department-name">{{ dept.name }}</div>
+                                    <div class="department-code">{{ dept.code|default:"No code" }}</div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div class="empty-state">
+                            <h3>No Departments Assigned</h3>
+                            <p>Contact an administrator to assign you to departments.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Students Absent Today -->
+            <div class="card">
+                <div class="card-header">
+                    ❌ Students Absent Today
+                </div>
+                <div class="card-body">
+                    {% if recent_absent %}
+                        {% for student in recent_absent %}
+                            <div class="attendance-item">
+                                <div>
+                                    <strong>{{ student.user.get_full_name }}</strong><br>
+                                    <small>ID: {{ student.student_id }}
+                                    {% if student.departments.all %}
+                                        - {% for dept in student.departments.all %}{{ dept.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                                    {% endif %}</small>
+                                </div>
+                                <div>
+                                    <span class="badge badge-danger">Absent</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-state">
+                            <h3>🎉 All Students Present!</h3>
+                            <p>No absent students in your departments today.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- My Students -->
+        <div class="card" style="margin-bottom: 30px;">
+            <div class="card-header">
+                👥 Students Under My Mentorship
+            </div>
+            <div class="card-body">
+                {% if mentor_students %}
+                    {% for student in mentor_students %}
+                        <div class="student-item">
+                            <div class="student-info">
+                                <div class="student-name">{{ student.user.get_full_name|default:student.user.username }}</div>
+                                <div class="student-id">{{ student.student_id }}
+                                    {% if student.dorm %} | Dorm: {{ student.dorm.name }}{% endif %}
+                                </div>
+                            </div>
+                            <div>
+                                <span class="badge badge-primary">Active</span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <h3>No Students Assigned</h3>
+                        <p>Students in your departments will appear here once departments are assigned.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="card">
+            <div class="card-header">
+                ⚡ Quick Actions
+            </div>
+            <div class="card-body">
+                <div class="actions-grid">
+                    <a href="{% url 'core:students_list' %}" class="action-btn">
+                        👥 View All Students
+                    </a>
+                    <a href="{% url 'core:attendance_list' %}" class="action-btn">
+                        📝 Record Attendance
+                    </a>
+                    <a href="{% url 'core:departments_list' %}" class="action-btn">
+                        🏛️ View Departments
+                    </a>
+                    <a href="#" class="action-btn">
+                        📊 Student Reports
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

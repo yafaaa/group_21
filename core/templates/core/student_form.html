@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>{% if object %}Edit Student{% else %}Add Student{% endif %}</title>
+</head>
+<body>
+  <h1>{% if object %}Edit Student{% else %}Add Student{% endif %}</h1>
+  <form method="post">
+    {% csrf_token %}
+    <fieldset>
+      <legend>User</legend>
+      <p>
+        <label>Username</label>
+        {{ form.username }}
+      </p>
+      <p>
+        <label>First name</label>
+        {{ form.first_name }}
+      </p>
+      <p>
+        <label>Last name</label>
+        {{ form.last_name }}
+      </p>
+      <p>
+        <label>Email</label>
+        {{ form.email }}
+      </p>
+      <p>
+        <label>Password</label>
+        {{ form.password }}
+      </p>
+    </fieldset>
+    <fieldset>
+      <legend>Student</legend>
+      <p>
+        <label>Student ID</label>
+        {{ form.student_id }}
+      </p>
+      <p>
+        <label>Enrolled date</label>
+        {{ form.enrolled_date }}
+      </p>
+    </fieldset>
+    <button type="submit">Save</button>
+  </form>
+  <p><a href="{% url 'core:students_list' %}">Back to students</a></p>
+</body>
+</html>
